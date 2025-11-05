@@ -1,0 +1,37 @@
+{
+    "name": "Llama CPP Dev",
+
+    // 1. How to get the container image
+    "build": {
+        "dockerfile": "../Dockerfile.dev",  // Path to Dockerfile relative to this devcontainer.json
+        "context": ".."                     // Build context (everything Dockerfile can access)
+    },
+
+    // 2. Default folder that VSCode opens inside the container
+    "workspaceFolder": "/workspace",
+
+    // 3. Extensions VSCode will install in the container
+    "extensions": [
+        "ms-python.python",
+        "ms-vscode.cpptools"
+    ],
+
+    // 4. Bind mounts (host folders → container folders)
+    "mounts": [
+        "source=${localWorkspaceFolder}/dependency_versions,target=/workspace/dependency_versions,type=bind",
+        "source=${localWorkspaceFolder}/source,target=/workspace/source,type=bind",
+        "source=${localWorkspaceFolder}/models,target=/workspace/models,type=bind",
+        "source=${localWorkspaceFolder}/results,target=/workspace/results,type=bind"
+    ],
+
+    // 5. User inside the container
+    "remoteUser": "root",
+
+    // 6. VSCode settings specific to container
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+
+    // 7. Optional: command to run after container is created
+    "postCreateCommand": "bash /workspace/source/setup_dependencies.sh"
+}
