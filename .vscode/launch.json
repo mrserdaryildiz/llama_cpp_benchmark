@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {"name":"Python Debugger: Current File","type":"debugpy","request":"launch","program":"${file}","console":"integratedTerminal"},
+        {
+            "name": "Debug batch_benchmark.py with CLI args",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/source/batch_benchmark.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--csv_file", "${workspaceFolder}/source/batch_inputs.csv"
+            ]
+        }
+    ]
+}
