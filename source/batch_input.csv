@@ -1,0 +1,4 @@
+model,prompt
+../models/tinyllama.gguf,Hello world
+../models/tinyllama.gguf,What is AI?
+../models/llama-2-7b.Q4_K_M.gguf,Explain quantum computing
