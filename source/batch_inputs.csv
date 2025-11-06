@@ -1,4 +1,0 @@
-model,prompt
-/workspace/models/mistral.gguf,Hello world
-/workspace/models/phi2.gguf,Hello world
-/workspace/models/tinyllama.gguf,Hello world

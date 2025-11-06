@@ -1,0 +1,16 @@
+{
+  "runs": [
+    {
+      "model_path": "models/mistral.gguf",
+      "prompt": "Hello world"
+    },
+    {
+      "model_path": "models/mistral.gguf",
+      "prompt": "Hello world"
+    },
+    {
+      "model_path": "models/tinyllama.gguf",
+      "prompt": "Hello world"
+    }   
+  ]
+}

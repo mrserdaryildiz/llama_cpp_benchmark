@@ -1,49 +1,51 @@
 #!/usr/bin/env python3
-import csv
-import subprocess
-import sys
+import json
 import argparse
 import os
 
-# ---------------------------
-# Parse command-line arguments
-# ---------------------------
-parser = argparse.ArgumentParser(description="Batch benchmark LLaMA models from CSV")
-parser.add_argument("--csv_file", required=True, help="Path to CSV file with columns: model,prompt")
-parser.add_argument("-r", "--runs", type=int, default=1, help="Number of times to run each pair sequentially")
-parser.add_argument("--benchmark_script", default="/workspace/source/benchmark.py",
-                    help="Path to benchmark.py script")
-args = parser.parse_args()
+from benchmark import benchmark_model
 
-csv_file = args.csv_file
-num_runs = args.runs
-benchmark_script = args.benchmark_script
-
-# ---------------------------
-# Check CSV exists
-# ---------------------------
-if not os.path.exists(csv_file):
-    print(f"Error: CSV file '{csv_file}' not found")
-    sys.exit(1)
-
-# ---------------------------
-# Read CSV and loop
-# ---------------------------
-with open(csv_file, newline="", encoding="utf-8") as f:
-    reader = csv.DictReader(f)
-    if "model" not in reader.fieldnames or "prompt" not in reader.fieldnames:
-        print("Error: CSV must have columns 'model' and 'prompt'")
-        sys.exit(1)
-
-    for row in reader:
-        model_path = row["model"]
-        prompt = row["prompt"]
+def run_batch_benchmark(runs, num_runs=1):
+    run_results = []
+    for run_config in runs['runs']:
+        model_path = run_config["model_path"]
+        prompt = run_config["prompt"]
+        tokens = 50
+        replication_results = {}
         for run_idx in range(1, num_runs + 1):
             print(f"\n=== Running benchmark {run_idx}/{num_runs} for model '{model_path}' ===\n")
             try:
-                subprocess.run(
-                    ["python3", benchmark_script, model_path, prompt],
-                    check=True
-                )
-            except subprocess.CalledProcessError as e:
-                print(f"Error running benchmark for model {model_path}: {e}")
+                result = benchmark_model(model_path, prompt, tokens)
+                replication_results[run_idx] = result
+            except Exception as e:
+                print(f"Error running benchmark for model {model_path} prompt {prompt}: {e}")
+        run_results.append(replication_results)
+    
+    results = {"result": run_results}
+    return results
+
+if __name__ == "__main__":
+        # ---------------------------
+    # Parse command-line arguments
+    # ---------------------------
+    parser = argparse.ArgumentParser(description="Batch benchmark LLaMA models from CSV")
+    parser.add_argument("--json_file", required=True, help="Path to json file with columns: model,prompt")
+    parser.add_argument("-r", "--runs", type=int, default=1, help="Number of times to run each pair sequentially")
+    parser.add_argument("--output_folder", default=os.getcwd(), help="Number of times to run each pair sequentially")
+    args = parser.parse_args()
+
+    json_file = args.json_file
+    num_runs = args.runs
+    output_folder = args.output_folder
+
+    with open(json_file, "r", encoding="utf-8") as f:
+        runs = json.load(f)
+        results = run_batch_benchmark(runs, num_runs)
+
+    out_file = output_path = os.path.join(output_folder, "results.json")
+    # ✅ Save JSON file
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=2)
+
+    print(f"Saved JSON to {out_file}")
+    
