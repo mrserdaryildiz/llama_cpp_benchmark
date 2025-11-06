@@ -1,11 +1,15 @@
-import subprocess, sys, time, psutil, os, json
+import subprocess, argparse, time, psutil, os, json
 
-if len(sys.argv) < 3:
-    print("Usage: python3 benchmark.py <model_path> <prompt>")
-    sys.exit(1)
+parser = argparse.ArgumentParser(description="Benchmark LLaMA model using llama-cli")
+parser.add_argument("model_path", help="Path to GGUF model file")
+parser.add_argument("prompt", help="Prompt text to use for inference")
+parser.add_argument("-n", "--tokens", type=int, default=50, help="Number of tokens to generate")
+# parser.add_argument("--output", default="../results", help="Directory to save JSON results")
+args = parser.parse_args()  
 
-model_path = sys.argv[1]
-prompt = sys.argv[2]
+
+model_path = args.model_path
+prompt = args.prompt
 
 print(f"model_path: {model_path}", flush=True)
 print(f"prompt: {prompt}", flush=True)
