@@ -13,7 +13,6 @@ COPY dependency_versions/apt_snapshot.txt /tmp/apt_snapshot.txt
 # psutil
 RUN apt-get update && xargs apt-get install -y < /tmp/apt_snapshot.txt
 
-
 WORKDIR /workspace
 
 RUN git clone https://github.com/ggerganov/llama.cpp.git
