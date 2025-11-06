@@ -61,8 +61,8 @@ result["system_info"] = {
 result["output_preview"] = stdout.decode(errors="ignore") # [:200],
 result["stderr_preview"] = stderr.decode(errors="ignore") #[:200],
 
-os.makedirs("../results", exist_ok=True)
-output_file = f"../results/{os.path.basename(model_path)}.json"
+os.makedirs("/workspace/results", exist_ok=True)
+output_file = f"/workspace/results/{os.path.basename(model_path)}.json"
 with open(output_file, "w") as f:
     json.dump(result, f, indent=2)
 
