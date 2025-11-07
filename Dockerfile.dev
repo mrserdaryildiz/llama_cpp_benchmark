@@ -1,18 +1,15 @@
 # ubuntu 24.04 11/05/2025
 FROM ubuntu@sha256:66460d557b25769b102175144d538d88219c077c678a49af4afca6fbfc1b5252
 
+# Prod dev common apt packages
+# apt-get update && apt-get install -y python3 python3-pip python3-venv  
 
 # Extra packages needed for development
-# apt-get update && apt-get install -y \
-#     build-essential \
-#     git \
-#     python3 \
-#     python3-pip \
-#     cmake \
-#     libcurl4-openssl-dev \
-#     python3-psutil
+# apt-get update && apt-get install -y build-essential git cmake libcurl4-openssl-dev
+
 # Get the snapshot of dependency versions fron apt package manager
 # dpkg-query -W --showformat='${Package}=${Version}\n' > /workspace/dependency_versions/apt_snapshot_dev.txt
+
 # Copy the dependency snapshot into the container
 COPY dependency_versions/apt_snapshot_dev.txt /tmp/apt_snapshot_dev.txt
 
@@ -44,6 +41,11 @@ RUN python3 -m venv /opt/venv
 ENV PATH=/opt/venv/bin:${PATH}
 
 # Upgrade pip inside venv
-RUN pip install --upgrade pip
+# RUN pip install --upgrade pip
+
+# Install required Python packages
+# psutil for production and dev
+
+# pip-tools for dev
 
 CMD ["/bin/bash"]
