@@ -1,18 +1,15 @@
 # ubuntu 24.04 11/05/2025
 FROM ubuntu@sha256:66460d557b25769b102175144d538d88219c077c678a49af4afca6fbfc1b5252
 
+# Prod dev common apt packages
+# apt-get update && apt-get install -y python3 python3-pip python3-venv  
 
 # Extra packages needed for development
-# apt-get update && apt-get install -y \
-#     build-essential \
-#     git \
-#     python3 \
-#     python3-pip \
-#     cmake \
-#     libcurl4-openssl-dev \
-#     python3-psutil
+# apt-get update && apt-get install -y build-essential git cmake libcurl4-openssl-dev
+
 # Get the snapshot of dependency versions fron apt package manager
 # dpkg-query -W --showformat='${Package}=${Version}\n' > /workspace/dependency_versions/apt_snapshot_dev.txt
+
 # Copy the dependency snapshot into the container
 COPY dependency_versions/apt_snapshot_dev.txt /tmp/apt_snapshot_dev.txt
 
@@ -34,5 +31,27 @@ RUN cmake -B build && cmake --build build --config Release
 
 ENV PATH=/workspace/llama.cpp/build/bin:${PATH}
 # ENV LD_LIBRARY_PATH="/workspace/llama.cpp/build/lib:${LD_LIBRARY_PATH:-}"
+
+# -----------------------------
+# Setup Python virtual environment
+# -----------------------------
+# This avoids PEP 668 errors for compiled packages like psutil
+
+RUN python3 -m venv /opt/venv
+ENV PATH=/opt/venv/bin:${PATH}
+
+# Upgrade pip inside venv
+# This has problem with pip-tools.
+#RUN pip install --upgrade pip
+
+# Install required Python packages
+# psutil for production and dev
+# pip-tools for dev
+
+# Copy hash-locked requirements
+COPY dependency_versions/pip_snaphot_dev_hashes.txt /tmp/pip_snaphot_dev_hashes.txt
+
+# Install all packages using hashes
+RUN pip install --require-hashes -r /tmp/pip_snaphot_dev_hashes.txt
 
 CMD ["/bin/bash"]
