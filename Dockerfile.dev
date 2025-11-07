@@ -35,4 +35,15 @@ RUN cmake -B build && cmake --build build --config Release
 ENV PATH=/workspace/llama.cpp/build/bin:${PATH}
 # ENV LD_LIBRARY_PATH="/workspace/llama.cpp/build/lib:${LD_LIBRARY_PATH:-}"
 
+# -----------------------------
+# Setup Python virtual environment
+# -----------------------------
+# This avoids PEP 668 errors for compiled packages like psutil
+
+RUN python3 -m venv /opt/venv
+ENV PATH=/opt/venv/bin:${PATH}
+
+# Upgrade pip inside venv
+RUN pip install --upgrade pip
+
 CMD ["/bin/bash"]
