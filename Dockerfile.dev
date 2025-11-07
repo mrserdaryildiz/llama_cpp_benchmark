@@ -41,11 +41,17 @@ RUN python3 -m venv /opt/venv
 ENV PATH=/opt/venv/bin:${PATH}
 
 # Upgrade pip inside venv
-# RUN pip install --upgrade pip
+# This has problem with pip-tools.
+#RUN pip install --upgrade pip
 
 # Install required Python packages
 # psutil for production and dev
-
 # pip-tools for dev
+
+# Copy hash-locked requirements
+COPY dependency_versions/pip_snaphot_dev_hashes.txt /tmp/pip_snaphot_dev_hashes.txt
+
+# Install all packages using hashes
+RUN pip install --require-hashes -r /tmp/pip_snaphot_dev_hashes.txt
 
 CMD ["/bin/bash"]

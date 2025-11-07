@@ -19,3 +19,8 @@ pip freeze > requirements_dev.txt
 
 --- For Git-based libs (like llama.cpp):
 git rev-parse HEAD > llama_commit.txt
+
+--- generate hashes for pip packages:
+pip-compile --generate-hashes dependency_versions/requirements.in \
+            -o dependency_versions/requirements_prod.txt
+
